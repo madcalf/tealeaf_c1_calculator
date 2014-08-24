@@ -6,10 +6,10 @@
 # turns out the math operators are actually methods and you can pass them
 #   as parameters to other methods!
 #   2 ways to do it: 
-#     1. obj.method(:meth_name).call(args) or 
-#     2. obj.send(:meth_name, args)
+#     1. obj.send(:meth_name, args)  or
+#     2. obj.method(:meth_name).call(args) 
 #     Note the method needs to be specified as a symbol (with the colon)
-#     I'm using the first method cuz it seems a little clearer
+#     I'm using the send method cuz it's more succinct and seems clearer
 # 
 # Apparently need to use the hashrocket syntax if using symbols as values
 operators = {"1" => :+, "2" => :-, "3" => :*, "4" => :/ }
@@ -43,8 +43,9 @@ if confirm.downcase.start_with?("y")
   puts "Calculating...\n"
   puts "..."
   puts "..."
-  # do the calculation
-  result = num1.to_f.method(op).call(num2.to_f)  # this is freakin awesome that you can do this!
+  # do the calculation. This is freakin awesome that you can do this!
+  # result = num1.to_f.method(op).call(num2.to_f)  # using method() syntax
+  result = num1.to_f.send(op, num2.to_f)         # using send() syntax
   puts "The result of your calculation is: #{result}\n\n"
 else 
   puts "Well, ok then...\n"
