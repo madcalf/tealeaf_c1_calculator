@@ -17,15 +17,29 @@ def convert_to_num(val)
     val
   end
 end
+
+def numeric?(str) 
+  # using a regex found online.
+  # regexp = /^-?(?:\d+|\d{1,3}(?:,\d{3})+)?(?:\.\d+)?$/
+  # val.match(regexp)
+
+  # using Float this way seems to be a popular way to do this on SO
+  # anything wrong with it? 
+  # is it ok to rely on an exception to set a value?
+  begin 
+    result = Float(str) ? true : false
+  rescue
+    result = false
+  ensure
+    return result
+  end
+end
     
 # just uses a case statement to test for the correct operation
 # and performs the calculation
 def calculate val1, val2, operator
   puts
-  puts "Ok, calculating...\n" 
-  puts "Give me a minute...\n"
-  puts "..."
-  puts "..."
+  puts "Ok, calculating... give me a minute...\n\n"
 
   result = case operator[:name]
   when "add"
@@ -72,13 +86,27 @@ puts "========================================================"
 puts "Welcome to the most verbose calculator you'll ever use!"
 puts "========================================================"
 puts  
+
+ 
 # prompt for inputs
 puts "Please tell me the first number you'd like to work with:"
 input_str1 = gets.chomp
 
+# keep prompting until they supply a number
+while !numeric?(input_str1) 
+  puts "That won't work. Enter a number"
+  input_str1 = gets.chomp    
+end
+
 puts
 puts "Great, now give me a second number:"
 input_str2 = gets.chomp
+
+# keep prompting until they supply a number
+while !numeric?(input_str2) 
+  puts "That won't work. Enter a number. "
+  input_str2 = gets.chomp    
+end
 
 # prompt for operator and display options
 puts
@@ -89,11 +117,9 @@ end
 selection_str = "0"
 
 # keep prompting until they supply a valid choice
-until selection_str.to_i.between?(1, 5)
+while !selection_str.to_i.between?(1, 5)
+  puts "That's not an option. Select 1, 2, 3, 4, or 5"
   selection_str = gets.chomp
-  if !selection_str.to_i.between?(1, 5)
-    puts "That's not an option. Select 1, 2, 3, 4, or 5"
-  end  
 end
 
 # convert selection string to array index
