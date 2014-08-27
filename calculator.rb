@@ -52,7 +52,7 @@ def calculate val1, val2, operator
     begin
       val1 / val2
     rescue ZeroDivisionError => e
-      puts "Uh oh, looks like a '#{e.class}: #{e.message}'. I told you that wasn't gonna work!\n\n"
+      puts "ERROR: '#{e.class}: #{e.message}'. I told you that wasn't gonna work!\n\n"
       nil
      end
   when "mod"
@@ -69,9 +69,10 @@ def confirm_divide_by_zero?
   confirm.downcase.start_with?("y") ? true : false
 end
 
-def end_program 
-  puts "So, um... I guess we're done here.\n\n"
-  exit
+def confirm_do_over 
+  puts "So, um... I guess we're done here.\n"
+  puts "Unless you want to do another calculation? \n(Y)es | (N)o" 
+  gets.chomp.downcase == "y"
 end
 
 # ----- End Methods -----
@@ -87,65 +88,62 @@ puts "Welcome to the most verbose calculator you'll ever use!"
 puts "========================================================"
 puts  
 
- 
-# prompt for inputs
-puts "Please tell me the first number you'd like to work with:"
-input_str1 = gets.chomp
+loop do
+  # prompt for inputs
+  puts "Please tell me the first number you'd like to work with:"
+  input_str1 = gets.chomp
 
-# keep prompting until they supply a number
-while !numeric?(input_str1) 
-  puts "That won't work. Enter a number"
-  input_str1 = gets.chomp    
-end
-
-puts
-puts "Great, now give me a second number:"
-input_str2 = gets.chomp
-
-# keep prompting until they supply a number
-while !numeric?(input_str2) 
-  puts "That won't work. Enter a number. "
-  input_str2 = gets.chomp    
-end
-
-# prompt for operator and display options
-puts
-puts "What would you like me to do with these numbers?"
-operators.each_with_index do |item, index|
-  puts "(#{index + 1}) #{item[:name]}"
-end
-selection_str = "0"
-
-# keep prompting until they supply a valid choice
-while !selection_str.to_i.between?(1, 5)
-  puts "That's not an option. Select 1, 2, 3, 4, or 5"
-  selection_str = gets.chomp
-end
-
-# convert selection string to array index
-index = selection_str.to_i - 1
-operator = operators[index]
-
-# confirm the calculation
-puts "\nSo let me get this straight, you want me to do the following calculation?"
-puts "#{input_str1} #{operator[:symbol]} #{input_str2}" 
-puts "\n(Y)es | (N)o"
-confirm = gets.chomp
-
-if confirm.downcase.start_with?("y") 
-  num1 = convert_to_num(input_str1)
-  num2 = convert_to_num(input_str2)
-  # confirm if they're trying to divide an int by zero. Floats are ok.
-  if (operator[:name] == "divide") && (num1.class == Fixnum) && (num2 == 0)
-    if !confirm_divide_by_zero?
-      end_program
-    end
+  # keep prompting until they supply a number
+  while !numeric?(input_str1) 
+    puts "That won't work. Enter a number"
+    input_str1 = gets.chomp    
   end
-  calculate(num1, num2, operator)
-  end_program
-else
-  # they don't want to do the calculation
+
   puts
-  puts "Ok, no problem."
-  end_program
-end
+  puts "Great, now give me a second number:"
+  input_str2 = gets.chomp
+
+  # keep prompting until they supply a number
+  while !numeric?(input_str2) 
+    puts "That won't work. Enter a number. "
+    input_str2 = gets.chomp    
+  end
+
+  # prompt for operator and display options
+  puts
+  puts "What would you like me to do with these numbers?"
+  operators.each_with_index do |item, index|
+    puts "(#{index + 1}) #{item[:name]}"
+  end
+  selection_str = "0"
+
+  # keep prompting until they supply a valid choice
+  while !selection_str.to_i.between?(1, 5)
+    puts "That's not an option. Select 1, 2, 3, 4, or 5"
+    selection_str = gets.chomp
+  end
+
+  # convert selection string to array index
+  index = selection_str.to_i - 1
+  operator = operators[index]
+
+  # confirm the calculation
+  puts "\nSo let me get this straight, you want me to do the following calculation?"
+  puts "#{input_str1} #{operator[:symbol]} #{input_str2}" 
+  puts "\n(Y)es | (N)o"
+  confirm = gets.chomp
+
+  if confirm.downcase.start_with?("y") 
+    num1 = convert_to_num(input_str1)
+    num2 = convert_to_num(input_str2)
+    # confirm if they're trying to divide an int by zero. Floats are ok.
+    if (operator[:name] == "divide") && (num1.class == Fixnum) && (num2 == 0)
+      if !confirm_divide_by_zero?
+        break if !confirm_do_over
+      end
+    end
+    calculate(num1, num2, operator)
+  end
+  break if !confirm_do_over
+end  # end loop
+puts "Ok, no problem. Bye!"
